@@ -83,8 +83,8 @@ class LoginRegisterController extends Controller
         if(Auth::attempt($credentials))
         {
             //$request->session()->regenerate();
-            //return redirect()->route('dashboard')->withSuccess('You have successfully logged in!');
-            return view('auth.dashboard');
+            return redirect()->route('dashboard')->withSuccess('You have successfully logged in!');
+            //return view('auth.dashboard');
             //return redirect()->to('/employees');
             //return redirect()->action([EmployeeController::class, 'index']);
             //return redirect()->route("employees");
