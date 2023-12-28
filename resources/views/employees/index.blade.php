@@ -1,3 +1,4 @@
+
 @section('content')
 <!DOCTYPE html>
 <html lang="en">
@@ -5,24 +6,16 @@
     <meta charset="UTF-8">
     <title>Employee Details</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" >
-    <link rel="stylesheet" type="text/css" href="js/main.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
-    <!-- Ajax -->
-    <!-- <script type="text/javascript" src="//code.jquery.com/jquery-1.10.2.js"></script>  -->
-    <!-- <script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script> -->
-    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
     
-     <!-- Include jQuery Validation plugin -->
-    <!-- <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js"></script>  -->
-    <!-- <script src="{{asset('js/jquery-3.7.1.slim.min.js')}}"></script> -->
-
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <!-- <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet"> -->
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <script src="{{asset('js/jquery.validate.min.js')}}"></script>
     <script src="{{asset('js/additional-methods.min.js')}}"></script>
     
  <!-- Include other scripts if needed -->
- 
-
  
 </head>
 <style>
@@ -47,16 +40,49 @@
 <body>
     <div class="container mt-2">
         <div class="column">
-            <div class="col-lg-12 margin-tb">
+            <div class="col-lg-6 margin-tb">
                 <div class="pull-left">
                     <h2>Employee Details</h2>
                 </div>
                 <div style="text-align:left; margin-top:10%">
                     <button id="btnShow" class="btn btn-success">Create Employee</button>
-                    
-                </div>
+                 </div>
             </div>
-              <!-- Create Employee Modal -->
+            <!-- Logout -->
+            <nav class="navbar navbar-expand-lg bg-light">
+        <div class="container">
+          <!-- <a class="navbar-brand" href="#">User Sign Up/Login Form</a> -->
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNavDropdown">
+            <ul class="navbar-nav ms-auto">
+                @guest
+                <ul class="nav nav-pills nav-justified mb-3" id="ex1" role="tablist">
+                @else    
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            {{ Auth::user()->name }}
+                        </a>
+                        <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="{{ route('logout') }}"
+                            onclick="event.preventDefault();
+                            document.getElementById('logout-form').submit();"
+                            >Logout</a>
+                            <form id="logout-form" action="{{ route('logout') }}" method="POST">
+                                @csrf
+                            </form>
+                        </li>
+                        </ul>
+                    </li>
+                @endguest
+            </ul>
+          </div>
+        </div>
+    </nav> 
+             <!-- End -->
+            
+            <!-- Create Employee Modal -->
 
               <form id="employeeForm" action="{{ route('employees.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
@@ -138,7 +164,8 @@
                     <!-- Message Alert --> 
                    </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-default" data-bs-dismiss="modal">Close</button>
+                    <!-- <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button> -->
                     <button type="button" id="btnSave" class="btn btn-primary">Save</button>
                 </div>
             </div>
@@ -148,7 +175,7 @@
     <div>&nbsp; </div>
     <!-- End of Create Ajax -->
     <!-- Search and Dropdown -->
-            <div class="panel-body">
+    <div class="panel-body">
             <div class="form-group">
            <input type="text" class="form-controller" id="search" name="search" placeholder = "Search by Designation"></input>
           </div>
@@ -156,7 +183,7 @@
             <div class="alert alert-success">
                 <p>{{ $message }}</p>
             </div>
-         @endif
+        @endif
         </div>
         <div>
         <form action="{{ route('employees.index') }}" method="GET">
@@ -253,34 +280,32 @@
 <!-- End Edit Modal -->
 
    <!-- Modal confirmation -->
-    
-    <div class="modal fade" id="deleteEmployeeModal" tabindex="-1" role="dialog" aria-labelledby="deleteEmployeeModalLabel" aria-hidden="true">
+   <div class="modal fade" id="deleteEmployeeModal" tabindex="-1" aria-labelledby="deleteEmployeeModalLabel" aria-hidden="true">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Delete Employee</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body" id="deleteModalBody">
-                    <p>Are you sure you want to delete this employee?</p>
-                    <p><strong>Employee Name:</strong> <span id="employeeName"></span></p>
-                    <p><strong>Employee ID:</strong> <span id="employeeId"></span></p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-danger" id="confirmDeleteButton">Delete</button>
-                </div>
-                <div class="modal-message">
-                    <!-- Message Alert -->
-                   </div>
-                
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteEmployeeModalLabel">Delete Employee</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="deleteModalBody">
+                <p>Are you sure you want to delete this employee?</p>
+                <p><strong>Employee Name:</strong> <span id="employeeName"></span></p>
+                <p><strong>Employee ID:</strong> <span id="employeeId"></span></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteButton">Delete</button>
+            </div>
+            <div class="modal-message">
+                <!-- Message Alert -->
             </div>
         </div>
     </div>
+</div>
 <!-- End of  Delete -->
+
+
 
 <!-- Java scipt and Ajax for Search option -->
 <script type="text/javascript">
@@ -290,6 +315,9 @@ $.ajax({
 type : 'get',
 url : '{{URL::to('search')}}',
 data:{'search':$value},
+headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
 success:function(data){
 $('tbody').html(data);
 }
@@ -305,11 +333,31 @@ $.ajaxSetup({ headers: { 'csrftoken' : '{{ csrf_token() }}' } });
 <script>
     var employeesStoreRoute = "{{ route('employees.store') }}";
 </script>
- <!-- Check validation -->
+ <!-- Check validation All Fields at a time-->
  <script>
     $("#btnSave").click(function () {
-    $("#employeeForm").valid(); // This should trigger validation
+    $("#employeeForm").valid(); 
 });
 </script>
+<!-- Disable Back Button -->
+<script>
+    window.onload = function () {
+        if (window.history.replaceState) {
+            window.history.replaceState(null, null, window.location.href);
+        }
+    };
+</script>
+<!-- <script>
+    window.onload = function () {
+        if (window.history.replaceState) {
+            window.history.replaceState(null, null, window.location.href);
+            window.onpopstate = function () {
+                window.history.pushState(null, null, window.location.href);
+            };
+        }
+    };
+</script> -->
+
  </body>
 </html>
+

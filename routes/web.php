@@ -25,31 +25,33 @@ use App\Http\Controllers\Auth\LoginRegisterController;
 Route::get('/', function () {
    return view('welcome');
 });
+//changed from web to auth middleware
 
-Route::group(['middleware' => 'web'], function () {
+Route::group(['middleware' => ['auth', 'disable_bkbtn']], function () {
     Route::get('/register', [App\Http\Controllers\Auth\LoginRegisterController::class, 'register'])->name('register');
     Route::post('/store', [App\Http\Controllers\Auth\LoginRegisterController::class, 'store'])->name('store');
     Route::get('/login', [App\Http\Controllers\Auth\LoginRegisterController::class, 'login'])->name('login');
     Route::post('/authenticate', [App\Http\Controllers\Auth\LoginRegisterController::class, 'authenticate'])->name('authenticate');
     Route::get('/dashboard', [App\Http\Controllers\Auth\LoginRegisterController::class, 'dashboard'])->name('dashboard');
     Route::post('/logout', [App\Http\Controllers\Auth\LoginRegisterController::class, 'logout'])->name('logout');
-    //Route::get('/employees', [App\Http\Controllers\Auth\EmployeeController::class, 'index'])->name('employees');
 
+    // Restrict access to these routes by adding the 'auth' middleware
+    Route::group(['middleware' => ['auth']], function () {
+        Route::resource('employees', [App\Http\Controllers\EmployeeController::class, 'employees'])->name('employees');
+        Route::get('employees-index', [App\Http\Controllers\EmployeeController::class,'index'])->name('employees-index');
+    });
 });
 
-//For After Login
-Route::get('/employees', 'EmployeeController@index')->name('employees.index');
 
 
-
-Route::resource('employees', App\Http\Controllers\EmployeeController::class);
+//Route::resource('employees', App\Http\Controllers\EmployeeController::class);
 
 //Filter or Drop Down
-Route::get('employees-index', 'App\Http\Controllers\EmployeeController@index');
+//Route::get('employees-index', 'App\Http\Controllers\EmployeeController@index');
 
 // search option
-//Route::get('/', 'App\Http\Controllers\SearchController@index');
-//Route::get('/search','App\Http\Controllers\SearchController@search');
+Route::get('/', 'App\Http\Controllers\SearchController@index');
+Route::get('/search','App\Http\Controllers\SearchController@search');
 
 //Filter
  //Route::get('/', 'App\Http\Controllers\FilterController@index');

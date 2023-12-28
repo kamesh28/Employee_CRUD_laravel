@@ -18,6 +18,12 @@ class EmployeeController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+
+     public function __construct()
+{
+    $this->middleware('auth')->only(['index']); // This is for restrict to access in the url
+}
+
    
     public function index(Request $request)
     {

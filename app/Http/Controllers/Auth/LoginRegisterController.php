@@ -7,18 +7,24 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Response; //disable back button
 
 class LoginRegisterController extends Controller
 {
     /**
      * Instantiate a new LoginRegisterController instance.
      */
+    // public function __construct()
+    // {
+    //     $this->middleware('guest')->except([
+    //         'logout', 'dashboard'
+    //     ]);
+    // }
     public function __construct()
-    {
-        $this->middleware('guest')->except([
-            'logout', 'dashboard'
-        ]);
-    }
+{
+    $this->middleware('auth')->only(['logout', 'dashboard']);
+}
+
 
     /**
      * Display a registration form.
@@ -95,7 +101,7 @@ class LoginRegisterController extends Controller
 
         return back()->withErrors([
             'email' => 'Your provided credentials do not match in our records.',
-        ])->onlyInput('email');
+            ])->onlyInput('email');
 
     } 
     
@@ -129,10 +135,20 @@ class LoginRegisterController extends Controller
     public function logout(Request $request)
     {
         Auth::logout();
-        //$request->session()->invalidate();
-        //$request->session()->regenerateToken();
-        return redirect()->route('login');
-            //->withSuccess('You have logged out successfully!');
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        // // Clear browser cache
+        // $response = Response::make('Logout', 200);
+        // $response->header('Cache-Control', 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0');
+        // $response->header('Pragma', 'no-cache');
+        // $response->header('Expires', 'Thu, 19 Nov 1981 08:52:00 GMT');
+
+        // return $response;
+       
+        //return redirect('login')->withSuccess('You have logged out successfully!');
+        return redirect()->route('login')->withSuccess('You have logged out successfully!');
+        //return view('auth.login');
     }    
 
 }

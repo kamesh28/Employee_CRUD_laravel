@@ -41,11 +41,7 @@ class EmployeeController extends Controller
      }
      $designations = Employee::pluck('designation')->unique(); //Filter
  
-
-
-
-
-     
+    
  //Pagination as per your request
  $perPage = request('perPage', 10);
  $page = request('page', 1);
